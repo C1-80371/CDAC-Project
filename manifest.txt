@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    
+    environment {
+        GIT_REPO_NAME = "Tetris-deployment-file"
+        GIT_USER_NAME = "C1-80371"
+    }
+    
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/C1-80371/Tetris-deployment-file.git'
+            }
+        }
+        
+        stage('Update Deployment File') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+                        try {
+                            NEW_IMAGE_NAME = "sardin2001/tetrisv2:latest"
+                            sh "sed -i 's|image: .*|image: $NEW_IMAGE_NAME|' deployment.yml"
+                            sh 'git add deployment.yml'
+                            sh 'git add dependency-check-report.xml'
+                            sh 'git add trivyfs.txt'
+                            sh 'git add trivyimage.txt'
+                    
+                            // Check if there are changes to commit
+                            def gitStatus = sh(script: 'git status --porcelain', returnStdout: true).trim()
+                            if (gitStatus) {
+                                // Commit the changes
+                                sh "git commit -m 'Update deployment image to $NEW_IMAGE_NAME'"
+                                // Push the changes
+                                sh "git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main"
+                            } else {
+                                echo "No changes to commit."
+                            }
+                        } catch (Exception e) {
+                            // Print the error message
+                            echo "Error: ${e.message}"
+                            // Mark the build as failed
+                            error "Failed to update deployment file"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
