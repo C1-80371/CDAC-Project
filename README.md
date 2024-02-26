@@ -12,12 +12,6 @@ Tetris game built with React
 
 > Fully responsive tetris game built with ReactJS
 
-<p align="start">
-	  <a href="https://mpirescarvalho.github.io/react-tetris/">
-			<img alt="Website" src="https://img.shields.io/website?url=https%3A%2F%2Fmpirescarvalho.github.io/react-tetris">
-    </a>
-</p>
-
 <h1 align="center">
   <img alt="React tetris desktop" title="#React tetris desktop" src="./assets/react-tetris-desktop-1.png" />
   <img width="35%" alt="React tetris mobile 2" title="#React tetris mobile 2" src="./assets/react-tetris-mobile-2.png" />
